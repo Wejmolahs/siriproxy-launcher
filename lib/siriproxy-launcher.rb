@@ -15,12 +15,18 @@ class SiriProxy::Plugin::Launcher < SiriProxy::Plugin
     #if you have custom configuration options, process them here!
   end
 
- listen_for /open (.*) /i do |appName|
+ listen_for /open|launch (.*) /i do |appName|
+ 
+ begin
  	it = Appscript.app(appName)
     	it.activate
 	it.run
  say "Ok, " + appName + " launched."
  request_completed
+ end
+ 
+ rescue
+ 	say "Something went wrong, it seems " + appName + " isn't a valid application."
  end
 
  listen_for /siri jam (.*)/i do |userAction|
