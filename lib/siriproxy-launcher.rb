@@ -19,7 +19,6 @@ class SiriProxy::Plugin::Launcher < SiriProxy::Plugin
     
     begin
         it = Appscript.app(appName)
-        it = it.strip
         it.activate
         it.run
         say "Ok, " + appName + " launched."
@@ -28,9 +27,9 @@ class SiriProxy::Plugin::Launcher < SiriProxy::Plugin
         say "Something went wrong, it seems \"" + appName + "\" isn't a valid application."
         begin
             appName = ask "Say the name of the application you want to launch, please."
+            appName = it.strip
             it = Appscript.app(appName)
             puts "appName=["+appName+"]"
-            it = it.strip
             it.activate
             it.run
         rescue
