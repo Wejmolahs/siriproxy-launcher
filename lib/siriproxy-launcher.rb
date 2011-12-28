@@ -11,52 +11,60 @@ require 'appscript'
 ######
 
 class SiriProxy::Plugin::Launcher < SiriProxy::Plugin
-  def initialize(config)
-    #if you have custom configuration options, process them here!
-  end
-
- listen_for /open|launch (.*) /i do |appName|
- 
- begin
- 	it = Appscript.app(appName)
-    	it.activate
-	it.run
- say "Ok, " + appName + " launched."
- request_completed
- rescue
- 	say "Something went wrong, it seems " + appName + " isn't a valid application."
- 	request_completed
-
+    def initialize(config)
+        #if you have custom configuration options, process them here!
+    end
+    
+    listen_for /open (.*) /i do |appName|
+    
+    begin
+        it = Appscript.app(appName)
+        it = it.strip
+        it.activate
+        it.run
+        say "Ok, " + appName + " launched."
+        request_completed
+    rescue
+        say "Something went wrong, it seems \"" + appName + "\" isn't a valid application."
+        begin
+            appName = ask "Say the name of the application you want to launch, please."
+            it = Appscript.app(appName)
+            puts "appName=["+appName+"]"
+            it = it.strip
+            it.activate
+            it.run
+        rescue
+            say "I'm sorry you're having trouble trying to launch programs. Unfortunately, it doesn't seem \"" + appName + "\" works for me."
+        end
+        request_completed
+    end
 end
 
- listen_for /siri jam (.*)/i do |userAction|
-  while userAction.empty? do
-  userAction = ask "Which Playlist?"
-  end
-it = Appscript.app("iTunes")
-it.playlists[userAction.strip].play
-
-say "OK, I'll play that."
-request_completed
-end
-
-
-listen_for /please fix my media center/i do
-	te = Appscript.app('iTunes')
-	if te.is_running?
-#	say "Ok, I see iTunes is Running, I'll kill it now."
-   	te.quit
-	sleep(1)
-#	say "Ok, iTunes should have been killed, we'll wait a couple to make sure."
-	sleep(2)
-end
-#say "Ok, I am going to launch iTunes now."
-te.launch
-sleep (1)
-say "OK, Things should be back to normal."
-request_completed
-end
-
-
-
+listen_for /siri jam (.*)/i do |userAction|
+    while userAction.empty? do
+        userAction = ask "Which Playlist?"
+    end
+        it = Appscript.app("iTunes")
+        it.playlists[userAction.strip].play
+        
+        say "OK, I'll play that."
+        request_completed
+    end
+    
+    
+    listen_for /please fix my media center/i do
+        te = Appscript.app('iTunes')
+        if te.is_running?
+            #	say "Ok, I see iTunes is Running, I'll kill it now."
+            te.quit
+            sleep(1)
+            #	say "Ok, iTunes should have been killed, we'll wait a couple to make sure."
+            sleep(2)
+        end
+        #say "Ok, I am going to launch iTunes now."
+        te.launch
+        sleep (1)
+        say "OK, Things should be back to normal."
+        request_completed
+    end
 end
