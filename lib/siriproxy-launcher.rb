@@ -27,6 +27,8 @@ class SiriProxy::Plugin::Launcher < SiriProxy::Plugin
  	say "Something went wrong, it seems " + appName + " isn't a valid application."
  	request_completed
 
+end
+
  listen_for /siri jam (.*)/i do |userAction|
   while userAction.empty? do
   userAction = ask "Which Playlist?"
