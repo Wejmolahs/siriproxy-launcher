@@ -23,10 +23,10 @@ class SiriProxy::Plugin::Launcher < SiriProxy::Plugin
 	it.run
  say "Ok, " + appName + " launched."
  request_completed
- end
  
  rescue
  	say "Something went wrong, it seems " + appName + " isn't a valid application."
+ 	request_completed
  end
 
  listen_for /siri jam (.*)/i do |userAction|
